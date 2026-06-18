@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Jolly · Dünya Kupası Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abel&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=Barlow:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#ed1c24; --red2:#df2025; --blue:#0078ce;
+    --gilroy:"Poppins",system-ui,sans-serif;
+    --abel:"Abel","Poppins",sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--gilroy);
+    background:#06060a;
+    overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  /* faint ambient backdrop behind the phone (desktop) */
+  body::before{content:"";position:fixed;inset:0;
+    background:radial-gradient(900px 700px at 50% 30%,#16213f 0%,#0a0c16 60%,#06060a 100%);z-index:0}
+
+  #app{position:fixed;inset:0;z-index:1}
+  .stage{
+    position:absolute;left:50%;top:50%;transform-origin:center center;
+    width:393px;height:852px;overflow:hidden;border-radius:30px;
+    box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+    background:#0b1747;
+  }
+
+  /* ---------- background layers ---------- */
+  .bg{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;z-index:0}
+  .bg-intro{
+    background:
+      linear-gradient(180deg, rgba(8,16,48,.55) 0%, rgba(8,16,48,0) 24%, rgba(8,16,48,0) 50%, rgba(245,249,255,.82) 72%, rgba(247,250,255,.95) 100%),
+      url("assets/stadium-intro.png") center/cover no-repeat,
+      linear-gradient(155deg,#0b1747 0%,#3f71ba 100%);
+  }
+  .bg-question{background:linear-gradient(180deg,#cdd5d7,#a8b1b3)}
+  .bg-question::after{content:"";position:absolute;inset:0;
+    background:url("assets/stadium-intro.png") center/cover no-repeat;
+    filter:blur(46px);transform:scale(1.25);opacity:.17}
+  .bg-result{background:var(--blue) url("assets/result-bg.png") center 62%/cover no-repeat}
+
+  .stage[data-screen="intro"]    .bg-intro{opacity:1}
+  .stage[data-screen="question"] .bg-question{opacity:1}
+  .stage[data-screen="result"]   .bg-result{opacity:1}
+
+  /* ---------- persistent top bar ---------- */
+  .topbar{position:absolute;left:0;top:0;width:393px;height:94px;z-index:30;
+    backdrop-filter:blur(4px);display:flex;flex-direction:column;justify-content:flex-end;
+    align-items:center;padding-top:20px;gap:12px}
+  .topbar .row{width:344px;display:flex;align-items:center;justify-content:space-between;opacity:.4}
+  .topbar .grp{display:flex;align-items:center;gap:8px}
+  .doc{width:20px;height:17px;display:flex;align-items:center;justify-content:space-between}
+  .doc i{display:block;width:9px;border-radius:1px;background:#fff}
+  .doc i:first-child{height:10.5px;background:rgba(255,255,255,.5)}
+  .doc i:last-child{height:15.8px}
+  .topbar .label{font-family:"Barlow";font-weight:600;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#fff;white-space:nowrap}
+  .topbar .share{display:flex;align-items:center;gap:6px}
+  .topbar .share span{font-family:"Barlow";font-weight:600;font-size:15px;color:#fff}
+  .topbar .share svg{display:block}
+  .topbar .hair{width:393px;height:1px;background:#fff;opacity:.18}
+
+  /* ---------- screens ---------- */
+  .screen{position:absolute;inset:0;z-index:20;opacity:0;pointer-events:none;
+    transition:opacity .45s ease, transform .45s ease;transform:translateY(8px)}
+  .screen.active{opacity:1;pointer-events:auto;transform:none}
+  .abs{position:absolute}
+  .cx{left:50%;transform:translateX(-50%)}
+
+  /* sponsor lockup */
+  .sponsor{display:flex;align-items:center;gap:10px}
+  .sponsor img{height:27px;width:auto;display:block}
+  .sponsor .sep{width:1px;height:10px;opacity:.5}
+  .sponsor .txt{font-weight:500;font-size:12px;letter-spacing:-.02em;opacity:.5}
+
+  /* ===== INTRO ===== */
+  #s-intro .sponsor{top:483px}
+  #s-intro .sponsor .sep{background:var(--red)} #s-intro .sponsor .txt{color:var(--red)}
+  #s-intro .title{top:528px;width:309px;font-family:var(--abel);font-size:40px;line-height:1.04;
+    color:var(--red);text-align:center}
+  #s-intro .sub{top:636px;width:324px;font-size:15px;line-height:1.32;color:#10131a;text-align:center}
+  #s-intro .start{top:722px;border:none;cursor:pointer;background:var(--red);color:#fff;
+    font-weight:700;font-size:20px;padding:13px 80px;border-radius:50px;
+    box-shadow:0 14px 30px -10px rgba(237,28,36,.7)}
+  #s-intro .start:active{transform:translateX(-50%) scale(.97)}
+
+  /* ===== QUESTION ===== */
+  #s-question .sponsor{top:146px;left:24px}
+  #s-question .sponsor .sep{background:#fff} #s-question .sponsor .txt{color:#fff}
+  #s-question .q{top:176px;left:24px;width:346px;font-weight:800;font-size:30px;line-height:1.16;color:#fff;
+    text-shadow:0 2px 18px rgba(0,0,0,.25)}
+  .opts{position:absolute;top:415px;left:24px;width:344px;display:flex;flex-direction:column;gap:13px}
+  .opt{display:flex;align-items:center;gap:8px;width:100%;cursor:pointer;
+    border:.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.2);
+    backdrop-filter:blur(4px);border-radius:50px;padding:19px 25px;
+    text-align:left;transition:background .25s, transform .12s, opacity .3s;}
+  .opt .lbl{flex:1;font-weight:700;font-size:22px;color:#fff;line-height:1.1}
+  .opt .radio{flex:none;width:28px;height:28px;border-radius:50%;
+    border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.06);
+    display:flex;align-items:center;justify-content:center}
+  .opt .radio .tick{opacity:0;font-size:16px;font-weight:800;color:var(--red);transition:opacity .2s}
+  .opt:active{transform:scale(.99)}
+  .opt.selected{background:var(--red);border-color:rgba(255,255,255,.65)}
+  .opt.selected .radio{background:#fff;border-color:#fff}
+  .opt.selected .radio .tick{opacity:1}
+  .opts.locked .opt{cursor:default}
+  .dots{position:absolute;top:787px;display:flex;gap:6px;align-items:center;
+    background:rgba(255,255,255,.14);padding:6px 9px;border-radius:60px}
+  .dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:.3s}
+  .dots i.on{width:14px;border-radius:6px;background:var(--red)}
+
+  /* ===== RESULT ===== */
+  #s-result .badge{top:110px;left:calc(50% - 113.5px);z-index:3;background:var(--red2);
+    color:#fff;font-weight:700;font-size:12px;letter-spacing:.02em;text-transform:uppercase;
+    padding:9px 10px 8px;border-radius:50px;line-height:1}
+  #s-result .card{top:120px;width:351px;height:80px;border-radius:14px;
+    background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(32px)}
+  #s-result .cardrow{top:137px;width:313px;display:flex;align-items:center;justify-content:space-between;z-index:3}
+  #s-result .cardrow .info{width:234px;display:flex;flex-direction:column;align-items:center;color:#fff;text-align:center}
+  #s-result .cardrow .info .t{font-family:"Poppins";font-weight:700;font-size:16px;line-height:1.25}
+  #s-result .cardrow .info .s{font-family:"Inter";font-weight:500;font-size:12px;line-height:1.2;margin-top:1px}
+  #s-result .cardrow .emoji{width:58px;height:45px;border-radius:7.33px;flex:none;position:relative;
+    background:rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:27px}
+  #s-result .jolly{top:216px;height:27px}
+  #s-result .head{top:251px;width:350px;font-family:var(--abel);font-size:30px;line-height:1.1;
+    letter-spacing:-.6px;color:#fff;text-align:center}
+  #s-result .text{top:330px;width:300px;font-weight:500;font-size:16px;line-height:1.2;color:#fff;text-align:center}
+  #s-result .offers{top:392px;display:flex;gap:10px;align-items:flex-end}
+  #s-result .offer{color:#fff;font-weight:700;line-height:1.01;white-space:nowrap;text-align:left}
+  #s-result .offer .big{font-size:34px} #s-result .offer .sm{font-size:14px}
+  #s-result .offers .vline{width:1px;height:44px;background:#d9d9d9;opacity:.85}
+  #s-result .cta{top:734px;width:300px;cursor:pointer;border:none;background:#fff;color:var(--red2);
+    font-family:"Poppins";font-weight:700;font-size:17px;text-align:center;padding:13px 40px;border-radius:50px;
+    box-shadow:0 16px 34px -12px rgba(0,0,0,.5)}
+  #s-result .cta:active{transform:translateX(-50%) scale(.97)}
+
+  /* entrance helpers — new questions slide DOWN into view */
+  @keyframes slideDown{from{opacity:0;transform:translateY(-32px)}to{opacity:1;transform:none}}
+  .opt{animation:slideDown .5s backwards}
+  .slidein{animation:slideDown .55s backwards}
+  /* wrong pick = faded (solgun); correct answer revealed red + tick */
+  .opt.faded{opacity:.4}
+
+  /* dev restart (outside phone, not part of the design) */
+  .restart{position:fixed;right:16px;bottom:16px;z-index:50;cursor:pointer;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#cfd6e6;
+    font-size:12px;font-weight:600;padding:8px 12px;border-radius:8px}
+  .restart:hover{background:rgba(255,255,255,.16)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="stage" id="stage" data-screen="intro">
+    <div class="bg bg-intro"></div>
+    <div class="bg bg-question"></div>
+    <div class="bg bg-result"></div>
+
+    <!-- top bar (persistent) -->
+    <header class="topbar">
+      <div class="row">
+        <div class="grp">
+          <span class="doc"><i></i><i></i></span>
+          <span class="label">Bir Bundle Studio Projesi</span>
+        </div>
+        <div class="share" id="shareBtn">
+          <span>Paylaş</span>
+          <svg width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9.5 1 15 6.5 9.5 12V8.6C5 8.6 2.4 9.9 1 13c0-5 2.5-7.6 8.5-8.1V1Z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div class="hair"></div>
+    </header>
+
+    <!-- INTRO -->
+    <section class="screen" id="s-intro">
+      <div class="sponsor abs cx">
+        <img src="assets/jolly-logo.svg" alt="Jolly">
+        <span class="sep"></span><span class="txt">Sponsorluğunda</span>
+      </div>
+      <div class="title abs cx">Dünya Kupası Quiz Başlıyor!</div>
+      <p class="sub abs cx">Futbol bilgin ne kadar keskin? Dünya Kupası quiz'ine katıl, soruları cevapla ve gerçek bir futbol fanı olup olmadığını keşfet.</p>
+      <button class="start abs cx" id="startBtn">Başla</button>
+    </section>
+
+    <!-- QUESTION (filled by JS) -->
+    <section class="screen" id="s-question">
+      <div class="sponsor abs">
+        <img src="assets/jolly-logo.svg" alt="Jolly">
+        <span class="sep"></span><span class="txt">Sponsorluğunda</span>
+      </div>
+      <h1 class="q abs" id="qText"></h1>
+      <div class="opts" id="qOpts"></div>
+      <div class="dots abs cx" id="qDots"></div>
+    </section>
+
+    <!-- RESULT (filled by JS) -->
+    <section class="screen" id="s-result">
+      <div class="badge abs" id="rBadge"></div>
+      <div class="card abs cx"></div>
+      <div class="cardrow abs cx">
+        <div class="info"><span class="t" id="rTitle"></span><span class="s" id="rSub"></span></div>
+        <div class="emoji" id="rEmoji"></div>
+      </div>
+      <img class="jolly abs cx" src="assets/jolly-logo.svg" alt="Jolly">
+      <div class="head abs cx" id="rHead"></div>
+      <p class="text abs cx" id="rText"></p>
+      <div class="offers abs cx">
+        <div class="offer"><span class="big">%50</span><span class="sm">'ye</span><br><span class="sm">varan indirim</span></div>
+        <div class="vline"></div>
+        <div class="offer"><span class="big">%50</span><span class="sm">'sini şimdi</span><br><span class="sm">kalanını sonra öde</span></div>
+        <div class="vline"></div>
+        <div class="offer"><span class="sm">İptal ve</span><br><span class="sm">iade hakkı</span></div>
+      </div>
+      <button class="cta abs cx" id="rCta"></button>
+    </section>
+  </div>
+</div>
+<button class="restart" id="restartBtn">↺ Baştan</button>
+
+<script>
+const JOLLY_URL = "https://www.jollytur.com/yaz-firsatlari?dclid=CKu3hbWEkZUDFdgwYwEd3VAtsg&gad_source=7&gad_campaignid=23930393505";
+
+const QUESTIONS = [
+  { q:"FIFA Dünya Kupası tarihinin en golcü oyuncusu kimdir?",
+    options:[["Ronaldo Nazário",0],["Miroslav Klose",1],["Pelé",0],["Lionel Messi",0]] },
+  { q:"Dünya Kupası'nı üst üste iki kez kazanan son milli takım hangisidir?",
+    options:[["Almanya",0],["Arjantin",0],["Brezilya",1],["İtalya",0]] },
+  { q:"Türkiye, Dünya Kupası tarihinde en iyi derecesini hangi yıl elde etti?",
+    options:[["1998",0],["2002",1],["2006",0],["2010",0]] },
+  { q:"Aşağıdaki ülkelerden hangisi Dünya Kupası'nı hiç kazanmamıştır?",
+    options:[["İspanya",0],["İngiltere",0],["Hollanda",1],["Fransa",0]] },
+];
+
+const RESULTS = {
+  4:{badge:"4/4 Doğru",title:"Dünya Kupası Efsanesi",sub:"Sen tam bir futbol ansiklopedisisin!",emoji:"🏆",
+     head:"Jolly ile yeni rotalar keşfet, yeni anılar biriktir.",text:"Belki sıradaki büyük futbol hikâyen bir tatilde başlar.",cta:"Yola Çık"},
+  3:{badge:"3/4 Doğru",title:"Tribünlerin Güvenilir İsmi",sub:"Futbol bilgin oldukça güçlü!",emoji:"⚽",
+     head:"Şimdi sıra Jolly ile yeni deneyimlerde.",text:"Jolly ile keşfedeceğin yeni şehirler ve yeni hikâyeler seni bekliyor.",cta:"Yeni Bir Maceraya Başla"},
+  2:{badge:"2/4 Doğru",title:"Hafta Sonu Taraftarı",sub:"Futbolu seviyorsun, ama hâlâ keşfedecek çok şey var.",emoji:"👏",
+     head:"Tıpkı seyahat gibi...",text:"Bazen en güzel hikâyeler planlamadığın anda karşına çıkar.",cta:"Yeni Hikâyeler Keşfet"},
+  1:{badge:"1/4 Doğru",title:"Futbol Turisti",sub:"Sonuçlar çok parlak olmayabilir ama önemli olan oyunun keyfi!",emoji:"😊",
+     head:"Jolly ile bir sonraki seyahat planını yapabilirsin.",text:"",cta:"Rotanı Belirle"},
+  0:{badge:"0/4 Doğru",title:"Futboldan Çok Tatil Takımı",sub:"Bu kez kupa sana gelmedi!",emoji:"🏖️",
+     head:"Senin uzmanlık alanın saha dışındaki maceralar.",text:"Yeni yerler görmen ve yeni anılar biriktirmen için Jolly'yle hep tatil mutluluğu yanında.",cta:"Tatil Modunu Aç"},
+};
+
+const stage=document.getElementById('stage');
+const screens={intro:document.getElementById('s-intro'),question:document.getElementById('s-question'),result:document.getElementById('s-result')};
+let qi=0, score=0;
+
+function show(name){
+  stage.dataset.screen = name;
+  for(const k in screens) screens[k].classList.toggle('active', k===name);
+}
+
+let optBtns=[], correctIdx=0;
+function renderQuestion(){
+  const data=QUESTIONS[qi];
+  const qEl=document.getElementById('qText');
+  qEl.textContent=data.q;
+  qEl.classList.remove('slidein'); void qEl.offsetWidth; qEl.classList.add('slidein'); // replay slide-down
+  const dots=document.getElementById('qDots');
+  dots.innerHTML=QUESTIONS.map((_,i)=>`<i class="${i===qi?'on':''}"></i>`).join('');
+  const wrap=document.getElementById('qOpts');
+  wrap.className='opts';
+  wrap.innerHTML='';
+  optBtns=[]; correctIdx=0;
+  data.options.forEach(([label,correct],idx)=>{
+    if(correct) correctIdx=idx;
+    const b=document.createElement('button');
+    b.className='opt';
+    b.style.animationDelay=(0.06*idx)+'s';
+    b.innerHTML=`<span class="lbl">${label}</span><span class="radio"><span class="tick">✓</span></span>`;
+    b.addEventListener('click',()=>pick(idx));
+    optBtns.push(b);
+    wrap.appendChild(b);
+  });
+  show('question');
+}
+
+function pick(idx){
+  const wrap=document.getElementById('qOpts');
+  if(wrap.classList.contains('locked')) return;
+  wrap.classList.add('locked');
+  const correct=QUESTIONS[qi].options[idx][1];
+  if(correct){
+    optBtns[idx].classList.add('selected');          // correct pick → red + tick
+    score++;
+  }else{
+    optBtns[idx].classList.add('faded');             // wrong pick → faded (solgun)
+    optBtns[correctIdx].classList.add('selected');   // reveal the correct answer red + tick
+  }
+  setTimeout(()=>{
+    qi++;
+    if(qi<QUESTIONS.length) renderQuestion();
+    else renderResult();
+  }, correct?820:1300);
+}
+
+function renderResult(){
+  const r=RESULTS[score]||RESULTS[0];
+  document.getElementById('rBadge').textContent=r.badge;
+  document.getElementById('rTitle').textContent=r.title;
+  document.getElementById('rSub').textContent=r.sub;
+  document.getElementById('rEmoji').textContent=r.emoji;
+  document.getElementById('rHead').textContent=r.head;
+  const t=document.getElementById('rText'); t.textContent=r.text; t.style.display=r.text?'':'none';
+  const cta=document.getElementById('rCta'); cta.textContent=r.cta;
+  cta.onclick=()=>{ window.location.href=JOLLY_URL; };
+  show('result');
+}
+
+function reset(){ qi=0; score=0; show('intro'); }
+
+document.getElementById('startBtn').addEventListener('click',()=>{qi=0;score=0;renderQuestion();});
+document.getElementById('restartBtn').addEventListener('click',reset);
+document.getElementById('shareBtn').addEventListener('click',()=>{
+  if(navigator.share){navigator.share({title:'Jolly Dünya Kupası Quiz',url:location.href}).catch(()=>{});}
+});
+
+// scale phone to fit viewport (full-screen experience)
+function fit(){
+  const s=Math.min(window.innerWidth/393, window.innerHeight/852, 1.18);
+  stage.style.transform=`translate(-50%,-50%) scale(${s})`;
+}
+window.addEventListener('resize',fit); fit();
+
+// deep links for testing/sharing: #q1..#q4, #r0..#r4
+function route(){
+  const h=location.hash;
+  let m;
+  if((m=h.match(/^#q([1-4])$/))){ qi=+m[1]-1; score=0; renderQuestion(); }
+  else if((m=h.match(/^#r([0-4])$/))){ score=+m[1]; renderResult(); }
+  else { reset(); }
+}
+window.addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>

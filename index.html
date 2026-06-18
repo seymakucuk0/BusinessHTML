@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BusinessHTML · Bundle Reklam Prototipleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Poppins",system-ui,sans-serif;color:#e9e6f2;min-height:100vh;
+    background:radial-gradient(1000px 700px at 50% -10%,#241d33 0%,#13111b 55%,#0c0a11 100%);
+    display:flex;flex-direction:column;align-items:center;padding:64px 22px 80px}
+  .eyebrow{font:600 12px/1 "Poppins";letter-spacing:.24em;text-transform:uppercase;color:#b59cff}
+  h1{font:800 34px/1.1 "Poppins";margin:12px 0 8px;text-align:center}
+  .lede{max-width:560px;text-align:center;color:#a9a4bc;font-size:15px;line-height:1.6;margin-bottom:44px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;width:100%;max-width:980px}
+  a.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;border-radius:18px;
+    overflow:hidden;background:#1a1726;border:1px solid rgba(255,255,255,.08);transition:.2s;min-height:200px}
+  a.card:hover{transform:translateY(-4px);border-color:rgba(181,156,255,.45);box-shadow:0 24px 50px -24px rgba(0,0,0,.8)}
+  .top{height:96px;display:flex;align-items:center;justify-content:center;font:700 20px/1 "Poppins";color:#fff}
+  .cd .top{background:#975038}
+  .bd .top{background:#89bd1e}
+  .jl .top{background:linear-gradient(135deg,#0b1747,#0078ce)}
+  .body{padding:18px 20px 22px;flex:1;display:flex;flex-direction:column}
+  .body h2{font:700 17px/1.25 "Poppins";margin-bottom:6px}
+  .body p{font-size:13px;line-height:1.5;color:#a9a4bc;flex:1}
+  .body .go{margin-top:14px;font:600 13px/1 "Poppins";color:#cbb7ff}
+  footer{margin-top:48px;color:#6f6a82;font-size:12px;text-align:center;line-height:1.7}
+  footer a{color:#b59cff;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="eyebrow">Bundle · Business</div>
+  <h1>Reklam Prototipleri</h1>
+  <p class="lede">Figma tasarımlarından birebir üretilmiş, etkileşimli ve paylaşılabilir HTML mockup'lar.
+     Tekrar eden reklam ailelerinde ilk mockup/prototip döngüsünü hızlandırmak için bir deneme.</p>
+
+  <div class="grid">
+    <a class="card cd" href="cartedor_interactive_masthead/">
+      <div class="top">Carte d'Or</div>
+      <div class="body">
+        <h2>Interactive Masthead</h2>
+        <p>Bundle feed'inin üstünde soru soran masthead; seçenek seçilince öneri tasarımına kayar.</p>
+        <span class="go">Demoyu aç →</span>
+      </div>
+    </a>
+    <a class="card bd" href="bioderma_interactive_masthead/">
+      <div class="top">Bioderma</div>
+      <div class="body">
+        <h2>Interactive Masthead</h2>
+        <p>Yeşil soru ekranı → açık temalı ürün önerisi (Sébium) ve "Satın al" akışı.</p>
+        <span class="go">Demoyu aç →</span>
+      </div>
+    </a>
+    <a class="card jl" href="jolly_worldcup_quiz/">
+      <div class="top">Jolly</div>
+      <div class="body">
+        <h2>Dünya Kupası Quiz</h2>
+        <p>Tam ekran, çalışan quiz: giriş → 4 soru → skora göre 5 sonuç → jollytur.com'a yönlendirme.</p>
+        <span class="go">Demoyu aç →</span>
+      </div>
+    </a>
+  </div>
+
+  <footer>
+    Bundle · Business HTML · 2026<br>
+    Detaylar için <a href="https://github.com/seymakucuk0/BusinessHTML">README</a> &amp; CONVERSATION.md
+  </footer>
+</body>
+</html>

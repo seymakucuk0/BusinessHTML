@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bundle · Interactive Masthead — Bioderma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#89bd1e;             /* Bioderma masthead */
+    --light:#e7e7ea;            /* result masthead bg */
+    --ink-blue:#2e3847;         /* Bioderma text */
+    --cta:#232b33;              /* Satın al */
+    --header-bg:#f4f5f6;
+    --src:#9c9c9c;--time:#aaaaac;--ink:#111114;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:"Poppins",system-ui,Arial,sans-serif;
+    background:radial-gradient(1100px 700px at 50% -10%,#22301a 0%,#15170f 55%,#0e100b 100%);
+    color:#e9efe1;min-height:100%;
+    display:flex;flex-direction:column;align-items:center;gap:18px;padding:34px 20px 60px;
+  }
+  .caption{text-align:center}
+  .caption .eyebrow{font:600 11px/1 "Poppins";letter-spacing:.22em;text-transform:uppercase;color:#a9d65a}
+  .caption h1{margin:9px 0 0;font:700 21px/1.2 "Poppins",sans-serif;color:#fff}
+  .caption p{margin:6px 0 0;font:400 12.5px/1.4 "Poppins";color:#8f988a}
+
+  /* ============ PHONE ============ */
+  .phone{
+    width:414px;height:872px;flex:0 0 auto;
+    background:linear-gradient(150deg,#2c2e33,#181a1b 60%,#22262b);
+    border-radius:58px;padding:13px;
+    box-shadow:0 0 0 2px #000,0 30px 70px -20px rgba(0,0,0,.85),inset 0 0 3px rgba(255,255,255,.18);
+  }
+  .screen{position:relative;width:388px;height:846px;background:#fff;border-radius:46px;overflow:hidden;display:flex;flex-direction:column}
+
+  /* header */
+  .header{background:var(--header-bg);flex:0 0 auto;position:relative;z-index:5;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+  .statusbar{height:48px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 6px}
+  .statusbar .time{font:700 15px/1 "Roboto",sans-serif;color:#000}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}
+  .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:118px;height:33px;background:#000;border-radius:20px;z-index:2}
+  .tabs-wrap{display:flex;align-items:center;gap:14px;padding:4px 0 12px 18px;overflow-x:auto;scrollbar-width:none}
+  .tabs-wrap::-webkit-scrollbar{display:none}
+  .hamburger{flex:0 0 auto;display:flex;flex-direction:column;gap:4px;width:22px;cursor:pointer}
+  .hamburger span{height:2px;border-radius:2px;background:#000}
+  .hamburger span:nth-child(1),.hamburger span:nth-child(2){width:21px}
+  .hamburger span:nth-child(3){width:13px}
+  .tabs{display:flex;align-items:center;gap:18px;padding-right:20px}
+  .tab{flex:0 0 auto;cursor:pointer;background:none;border:none;padding:2px 0;
+    font:700 13px/1 "Roboto",sans-serif;letter-spacing:.4px;text-transform:uppercase;color:#b3b3b3}
+  .tab.active{font-weight:900;color:#000}
+
+  /* scroll area — masthead full-bleed (no side padding) */
+  .feed{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:0 0 40px;-webkit-overflow-scrolling:touch}
+  .feed::-webkit-scrollbar{width:0}
+
+  /* ===== INTERACTIVE MASTHEAD (full-bleed) ===== */
+  .masthead{position:relative;height:208px;overflow:hidden}
+  .mh-track{display:flex;width:200%;height:100%;transition:transform .55s cubic-bezier(.7,0,.2,1)}
+  .masthead.show-result .mh-track{transform:translateX(-50%)}
+  .mh-slide{width:50%;height:100%;position:relative;flex:0 0 50%}
+
+  /* slide 1 — green question */
+  .b-q{background:var(--green);display:flex;flex-direction:column;padding:22px 30px 18px}
+  .b-q h2{margin:0;text-align:center;color:#fff;font:800 25px/1.04 "Poppins",sans-serif;letter-spacing:-.2px}
+  .b-opts{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:11px;padding-top:16px}
+  .b-opt{cursor:pointer;height:40px;border-radius:5px;font:700 13.5px/1 "Poppins";transition:.16s;border:1.3px solid transparent}
+  .b-opt.fill{background:#fff;color:var(--ink-blue)}
+  .b-opt.fill:hover{background:#f1f4e8}
+  .b-opt.ghost{background:rgba(255,255,255,.04);border-color:#fff;color:#fff}
+  .b-opt.ghost:hover{background:rgba(255,255,255,.16)}
+
+  /* slide 2 — light result */
+  .b-r{background:var(--light);padding:22px 22px}
+  .b-r .logo{width:82px;height:17px;display:block;opacity:0;transform:translateY(-4px);transition:.5s .1s}
+  .b-r h2{margin:10px 0 0;max-width:58%;color:var(--ink-blue);font:400 24px/1.06 "Poppins",sans-serif;letter-spacing:-.3px;
+    opacity:0;transform:translateY(8px);transition:.5s .2s}
+  .b-r .cta{margin-top:15px;cursor:pointer;display:inline-block;border:none;background:var(--cta);color:#fff;
+    font:600 13px/1 "Poppins";padding:11px 26px;border-radius:5px;opacity:0;transform:translateY(8px);transition:.5s .3s}
+  .b-r .cta:hover{filter:brightness(1.25)}
+  .b-r .product{position:absolute;right:40px;top:6px;height:196px;width:auto;transform:rotate(13deg);
+    filter:drop-shadow(0 12px 16px rgba(60,80,20,.28));opacity:0;transition:.6s .18s cubic-bezier(.34,1.3,.5,1)}
+  .b-r .product.ghost-tube{right:20px;top:14px;filter:blur(5px);opacity:0}
+  .masthead.show-result .b-r .logo,
+  .masthead.show-result .b-r h2,
+  .masthead.show-result .b-r .cta{opacity:1;transform:none}
+  .masthead.show-result .b-r .product{opacity:1;transform:rotate(13deg) translateY(0)}
+  .masthead.show-result .b-r .product.ghost-tube{opacity:.16}
+
+  /* ===== NEWS FEED ===== */
+  .grid{display:flex;gap:11px;padding:0 13px;margin-top:18px}
+  .col{flex:1 1 0;display:flex;flex-direction:column;gap:18px}
+  .card{cursor:pointer}
+  .card .thumb{width:100%;border-radius:9px;overflow:hidden;background:#eee;display:block}
+  .card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .card .src{margin:9px 0 0;font:600 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--src)}
+  .card h3{margin:4px 0 0;color:var(--ink);font:600 20px/1.12 "Barlow Condensed",sans-serif;letter-spacing:.1px}
+  .card .time{margin:7px 0 0;font:600 11px/1 "Barlow Condensed",sans-serif;color:var(--time)}
+  .feed-end{text-align:center;color:#c4c4c8;font:600 12px/1 "Barlow Condensed";letter-spacing:.2em;text-transform:uppercase;margin:26px 0 6px}
+
+  .reset{cursor:pointer;background:rgba(255,255,255,.06);color:#d6e0c6;border:1px solid rgba(255,255,255,.14);
+    font:600 12.5px/1 "Poppins";padding:10px 16px;border-radius:9px;transition:.15s}
+  .reset:hover{background:rgba(255,255,255,.12)}
+</style>
+</head>
+<body>
+
+  <div class="caption">
+    <div class="eyebrow">Bundle · Mockup test</div>
+    <h1>Interactive Masthead — Bioderma</h1>
+    <p>Bir nedeni seç → masthead, ürün önerisi tasarımına kayar. Feed aşağı kaydırılabilir.</p>
+  </div>
+
+  <div class="phone">
+    <div class="screen">
+
+      <!-- header -->
+      <div class="header">
+        <div class="island"></div>
+        <div class="statusbar">
+          <span class="time">9:41</span>
+          <span class="icons">
+            <svg width="18" height="12" viewBox="0 0 18 12"><g fill="#000">
+              <rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/>
+              <rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0.5" width="3" height="11.5" rx="1"/></g></svg>
+            <svg width="17" height="12" viewBox="0 0 17 12"><path fill="#000" d="M8.5 2.2c2.6 0 5 1 6.8 2.7l1.3-1.4C14.5 1.4 11.6.2 8.5.2 5.4.2 2.5 1.4.4 3.5l1.3 1.4C3.5 3.2 5.9 2.2 8.5 2.2zM8.5 6c1.4 0 2.7.5 3.7 1.4l1.3-1.4C12.2 4.8 10.4 4.1 8.5 4.1S4.8 4.8 3.5 6l1.3 1.4C5.8 6.5 7.1 6 8.5 6zm0 3.8 1.9-2c-.5-.5-1.2-.8-1.9-.8s-1.4.3-1.9.8z"/></svg>
+            <svg width="26" height="13" viewBox="0 0 26 13"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" fill="none" stroke="#000" stroke-opacity=".35"/><rect x="2" y="2" width="17.5" height="9" rx="2" fill="#000"/><rect x="23.5" y="4" width="1.6" height="5" rx="0.8" fill="#000" fill-opacity=".4"/></svg>
+          </span>
+        </div>
+        <div class="tabs-wrap">
+          <div class="hamburger"><span></span><span></span><span></span></div>
+          <div class="tabs">
+            <button class="tab active">Tümü</button>
+            <button class="tab">Gündem</button>
+            <button class="tab">Teknoloji</button>
+            <button class="tab">Finans</button>
+            <button class="tab">Bilim</button>
+            <button class="tab">Spor</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- scrollable feed -->
+      <div class="feed" id="feed">
+
+        <!-- interactive masthead (full-bleed) -->
+        <section class="masthead" id="masthead">
+          <div class="mh-track">
+            <!-- slide 1: green question -->
+            <div class="mh-slide b-q">
+              <h2>Sivilce oluşumuna neden olan etkenler nelerdir?</h2>
+              <div class="b-opts">
+                <button class="b-opt fill" data-answer="Stres">Stres</button>
+                <button class="b-opt fill" data-answer="Hormonlar">Hormonlar</button>
+                <button class="b-opt fill" data-answer="Beslenme">Beslenme</button>
+                <button class="b-opt ghost" data-answer="Hepsi">Hepsi</button>
+              </div>
+            </div>
+            <!-- slide 2: light result -->
+            <div class="mh-slide b-r">
+              <img class="logo" src="assets/bioderma-logo.svg" alt="Bioderma">
+              <h2>Sivilceler senin için sorun olmasın.</h2>
+              <button class="cta">Satın al</button>
+              <img class="product ghost-tube" src="assets/product-tube.png" alt="">
+              <img class="product" src="assets/product-tube.png" alt="Bioderma Sébium Gel gommant">
+            </div>
+          </div>
+        </section>
+
+        <!-- news feed (real Figma content) -->
+        <div class="grid">
+          <div class="col">
+            <article class="card">
+              <span class="thumb" style="aspect-ratio:172/137"><img src="assets/news-soul.png" alt=""></span>
+              <p class="src">Gosterco</p>
+              <h3>Pixar'ın Soul'u dijital platformlarda o kadar popüler oldu ki The Office'i bile geçti</h3>
+              <p class="time">2 dakika</p>
+            </article>
+            <article class="card">
+              <span class="thumb" style="aspect-ratio:171/152"><img src="assets/news-meghan.png" alt=""></span>
+              <p class="src">NTV</p>
+              <h3>Meghan Markle ve Prens Harry'nin oğlu Archie prens olamayacak</h3>
+              <p class="time">2 dakika</p>
+            </article>
+          </div>
+          <div class="col">
+            <article class="card">
+              <span class="thumb" style="aspect-ratio:173/145"><img src="assets/news-rocket.png" alt=""></span>
+              <p class="src">Anadolu Ajansı</p>
+              <h3>Japon milyarder, Ay seyahati için kendisine eşlik edecek 8 kişi arıyor</h3>
+              <p class="time">4 dakika</p>
+            </article>
+            <article class="card">
+              <span class="thumb" style="aspect-ratio:173/142"><img src="assets/news-volcano.png" alt=""></span>
+              <p class="src">Arkeofili</p>
+              <h3>Yanardağ, Erken İnsanları Aşırı Güneş Yanığına Maruz Bırakmış</h3>
+              <p class="time">24 dakika</p>
+            </article>
+          </div>
+        </div>
+
+        <!-- feed continues (same Bundle content, below the Figma fold) -->
+        <div class="grid">
+          <div class="col">
+            <article class="card">
+              <span class="thumb" style="aspect-ratio:173/145"><img src="assets/news-rocket.png" alt=""></span>
+              <p class="src">Anadolu Ajansı</p>
+              <h3>Japon milyarder, Ay seyahati için kendisine eşlik edecek 8 kişi arıyor</h3>
+              <p class="time">4 dakika</p>
+            </article>
+            <article class="card">
+              <span class="thumb" style="aspect-ratio:172/137"><img src="assets/news-soul.png" alt=""></span>
+              <p class="src">Gosterco</p>
+              <h3>Pixar'ın Soul'u dijital platformlarda o kadar popüler oldu ki The Office'i bile geçti</h3>
+              <p class="time">2 dakika</p>
+            </article>
+          </div>
+          <div class="col">
+            <article class="card">
+              <span class="thumb" style="aspect-ratio:171/152"><img src="assets/news-meghan.png" alt=""></span>
+              <p class="src">NTV</p>
+              <h3>Meghan Markle ve Prens Harry'nin oğlu Archie prens olamayacak</h3>
+              <p class="time">2 dakika</p>
+            </article>
+            <article class="card">
+              <span class="thumb" style="aspect-ratio:173/142"><img src="assets/news-volcano.png" alt=""></span>
+              <p class="src">Arkeofili</p>
+              <h3>Yanardağ, Erken İnsanları Aşırı Güneş Yanığına Maruz Bırakmış</h3>
+              <p class="time">24 dakika</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="feed-end">Bundle</div>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="reset" id="resetBtn">↺ Soruya dön</button>
+
+<script>
+  const masthead=document.getElementById('masthead');
+  const feed=document.getElementById('feed');
+  document.querySelectorAll('.b-opt').forEach(b=>b.addEventListener('click',()=>masthead.classList.add('show-result')));
+  if(location.hash==='#result')masthead.classList.add('show-result');
+  document.getElementById('resetBtn').addEventListener('click',()=>{masthead.classList.remove('show-result');feed.scrollTo({top:0,behavior:'smooth'});});
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{document.querySelector('.tab.active')?.classList.remove('active');t.classList.add('active');}));
+</script>
+</body>
+</html>
