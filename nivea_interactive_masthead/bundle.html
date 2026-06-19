@@ -84,12 +84,17 @@
   const CAMPAIGN = "nivea-masthead-190626";
   const IMP_URL  = "https://bit.ly/4oyzcqo"; // gösterim (impression)
 
+  // Görseller buradan çekilir. Kutay görselleri S3'e yükleyince BASE'i onun verdiği URL yap.
+  //   Lokal önizleme:  "assets/"
+  //   Production (S3): "https://static.bundle.app/ad-assets/nivea-masthead-190626/"
+  const BASE = "assets/";
+
   // cevaba göre sonuç + yönlendirme (Figma'daki Masthead 2-5)
   const RESULTS = {
-    leke:{product:"assets/prod-luminous.png",parts:["Aydınlık bir cilt için ","NIVEA Luminous630 Günlük UV Yüz Bakım Kremi SPF50"," ile yüksek güneş koruması & leke karşıtı etki"],url:"https://bit.ly/4fVLFSR"},
-    cam: {product:"assets/prod-skinglow.png",parts:["Cam cilt etkisi için ","NIVEA Skin Glow Günlük UV Fluid SPF50"," ile yüksek güneş koruması & anında 3 boyutlu parlaklık"],url:"https://bit.ly/4w2UwHi"},
-    sik: {product:"assets/prod-q10.png",parts:["Daha sıkı bir cilt için ","NIVEA Q10 Günlük UV Fluid SPF50"," ile yüksek güneş koruması & kırışıklık karşıtı etki"],url:"https://bit.ly/4vmDfJe"},
-    siv: {product:"assets/prod-derma.png",parts:["Pürüzsüz bir cilt için ","NIVEA Derma Skin Clear Günlük UV Fluid SPF50"," ile yüksek güneş koruması & sivilce karşıtı etki"],url:"https://bit.ly/3ShUiNU"},
+    leke:{product:BASE+"prod-luminous.png",parts:["Aydınlık bir cilt için ","NIVEA Luminous630 Günlük UV Yüz Bakım Kremi SPF50"," ile yüksek güneş koruması & leke karşıtı etki"],url:"https://bit.ly/4fVLFSR"},
+    cam: {product:BASE+"prod-skinglow.png",parts:["Cam cilt etkisi için ","NIVEA Skin Glow Günlük UV Fluid SPF50"," ile yüksek güneş koruması & anında 3 boyutlu parlaklık"],url:"https://bit.ly/4w2UwHi"},
+    sik: {product:BASE+"prod-q10.png",parts:["Daha sıkı bir cilt için ","NIVEA Q10 Günlük UV Fluid SPF50"," ile yüksek güneş koruması & kırışıklık karşıtı etki"],url:"https://bit.ly/4vmDfJe"},
+    siv: {product:BASE+"prod-derma.png",parts:["Pürüzsüz bir cilt için ","NIVEA Derma Skin Clear Günlük UV Fluid SPF50"," ile yüksek güneş koruması & sivilce karşıtı etki"],url:"https://bit.ly/3ShUiNU"},
   };
   const OPTIONS = [["LEKE KARŞITI ETKİ","leke"],["CAM CİLT ETKİSİ","cam"],["SIKILAŞTIRICI ETKİ","sik"],["SİVİLCE KARŞITI ETKİ","siv"]];
 
@@ -133,15 +138,15 @@
   /* ---- render ---- */
   const App = document.getElementById("App");
   App.innerHTML = `
-    <img class="bg" src="assets/bg.png" alt="">
+    <img class="bg" src="${BASE}bg.png" alt="">
     <img src="${IMP_URL}" alt="imp" style="width:1px;height:1px;display:none" referrerpolicy="no-referrer-when-downgrade">
     <section class="screen q on">
-      <div class="mh-logo"><img src="assets/nivea-logo.svg" alt="NIVEA"></div>
+      <div class="mh-logo"><img src="${BASE}nivea-logo.svg" alt="NIVEA"></div>
       <div class="title">Cildinizin ihtiyacına özel <span class="hl">güneş korumanızı</span> seçin!</div>
       <div class="opts"></div>
     </section>
     <section class="screen r">
-      <div class="mh-logo"><img src="assets/nivea-logo.svg" alt="NIVEA"></div>
+      <div class="mh-logo"><img src="${BASE}nivea-logo.svg" alt="NIVEA"></div>
       <p class="rtext"></p>
       <a class="kesfet" target="_blank" rel="noopener">Keşfet</a>
       <div class="podium"><div class="halo"></div><img class="prod" src="" alt=""><div class="shadow"></div></div>
