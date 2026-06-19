@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>NIVEA · İnteraktif Masthead</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{ --nivea:#1c359b; }
+  *,*::before,*::after{box-sizing:border-box}
+  *{margin:0}
+  body{line-height:1.5;-webkit-font-smoothing:antialiased;font-family:"Nunito",system-ui,Arial,sans-serif;
+    background:#dfeaf6;min-height:100vh}
+  img,picture,video,canvas,svg{display:block;max-width:100%}
+  button{background:transparent;border:none;padding:0;margin:0;font:inherit;cursor:pointer}
+
+  /* ===== Bundle responsive masthead canvas (production yapısı) ===== */
+  #App{
+    aspect-ratio:948 / 416;
+    max-height:416px;
+    max-width:948px;
+    width:100%;
+    height:auto;
+    position:absolute;
+    margin-left:auto;margin-right:auto;left:0;right:0;
+    overflow:hidden;
+    isolation:isolate;
+    container-type:inline-size;          /* tüm ölçüler #App genişliğine göre (cqw) */
+    background:#bcd6ea;
+  }
+  #App .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .mh-logo{position:absolute;z-index:3}.mh-logo img{width:100%;height:100%}
+
+  /* ekranlar — yatay kayma geçişi */
+  .screen{position:absolute;inset:0;z-index:2;opacity:0;pointer-events:none;
+    transition:transform .52s cubic-bezier(.6,0,.18,1), opacity .42s}
+  .q{transform:translateX(-100%)}
+  .r{transform:translateX(100%)}
+  .screen.on{opacity:1;pointer-events:auto;transform:translateX(0)}
+
+  /* soru */
+  .q .mh-logo{top:11.3%;right:5.7%;width:11.2cqw;aspect-ratio:1}
+  .q .title{position:absolute;left:6.6%;top:11%;width:69%;color:#fff;font:800 5.3cqw/1.06 "Nunito";letter-spacing:-.01em}
+  .q .title .hl{color:var(--nivea)}
+  .opts{position:absolute;left:50%;transform:translateX(-50%);top:43.5%;width:86.3%;display:grid;grid-template-columns:1fr 1fr;gap:1.9cqw}
+  .opt{background:#fff;color:var(--nivea);border-radius:100px;height:9cqw;display:flex;align-items:center;justify-content:center;
+    padding:0 2cqw;font:800 3.15cqw/1 "Nunito";text-transform:uppercase;letter-spacing:.01em;white-space:nowrap;
+    box-shadow:0 .5cqw 1.5cqw rgba(20,40,90,.18);transition:transform .12s,background .15s,font-weight .1s;width:100%}
+  .opt:hover{background:#eef3ff}
+  .opt.pressed{background:rgba(255,255,255,.3);font-weight:600;box-shadow:none}  /* Figma seçili/pressed */
+
+  /* sonuç */
+  .r .mh-logo{top:7%;left:5.5%;width:8.4cqw;aspect-ratio:1}
+  .r .rtext{position:absolute;left:6.2%;top:26.5%;width:49%;color:#fff;font:800 2.95cqw/1.2 "Nunito"}
+  .r .rtext .hl{color:var(--nivea)}
+  .r .kesfet{position:absolute;left:6.4%;top:75%;background:var(--nivea);color:#fff;border-radius:100px;text-decoration:none;
+    padding:0 4.5cqw;height:6.6cqw;display:flex;align-items:center;justify-content:center;font:700 3.15cqw/1 "Nunito";
+    box-shadow:0 .6cqw 1.6cqw rgba(20,40,90,.3);transition:transform .12s,filter .15s}
+  .r .kesfet:hover{filter:brightness(1.1)}
+  .r .podium{position:absolute;right:4%;top:6%;width:40%;height:88%;z-index:1}
+  .r .podium .halo{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:84%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(255,255,255,.55),rgba(255,255,255,0) 72%)}
+  .r .podium .prod{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);height:84%;width:auto;z-index:2;
+    filter:drop-shadow(0 3cqw 2.5cqw rgba(20,40,90,.28))}
+  .r .podium .shadow{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);width:46%;height:2.4%;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(30,60,120,.4),rgba(30,60,120,0) 75%)}
+</style>
+</head>
+<body>
+  <div id="App"></div>
+
+  <!-- Bundle cihaz verisi (uygulama bu değerleri doldurur) -->
+  <input id="device_model" name="device_model" type="hidden" value="Bundle_Device_Model"/>
+  <input id="device_system" name="device_system" type="hidden" value="Bundle_Device_System_Version"/>
+  <input id="device_token" name="device_token" type="hidden" value="Bundle_Device_Id"/>
+  <input id="device_location" name="device_location" type="hidden" value="Bundle_Device_Location"/>
+  <input id="device_platform" name="device_platform" type="hidden" value="Bundle_Device_Platform"/>
+  <input id="device_onesignal" name="device_onesignal" type="hidden" value="Bundle_OneSignal_Id"/>
+
+<script>
+(()=>{
+  "use strict";
+
+  const CAMPAIGN = "nivea-masthead-190626";
+  const IMP_URL  = "https://bit.ly/4oyzcqo"; // gösterim (impression)
+
+  // cevaba göre sonuç + yönlendirme (Figma'daki Masthead 2-5)
+  const RESULTS = {
+    leke:{product:"assets/prod-luminous.png",parts:["Aydınlık bir cilt için ","NIVEA Luminous630 Günlük UV Yüz Bakım Kremi SPF50"," ile yüksek güneş koruması & leke karşıtı etki"],url:"https://bit.ly/4fVLFSR"},
+    cam: {product:"assets/prod-skinglow.png",parts:["Cam cilt etkisi için ","NIVEA Skin Glow Günlük UV Fluid SPF50"," ile yüksek güneş koruması & anında 3 boyutlu parlaklık"],url:"https://bit.ly/4w2UwHi"},
+    sik: {product:"assets/prod-q10.png",parts:["Daha sıkı bir cilt için ","NIVEA Q10 Günlük UV Fluid SPF50"," ile yüksek güneş koruması & kırışıklık karşıtı etki"],url:"https://bit.ly/4vmDfJe"},
+    siv: {product:"assets/prod-derma.png",parts:["Pürüzsüz bir cilt için ","NIVEA Derma Skin Clear Günlük UV Fluid SPF50"," ile yüksek güneş koruması & sivilce karşıtı etki"],url:"https://bit.ly/3ShUiNU"},
+  };
+  const OPTIONS = [["LEKE KARŞITI ETKİ","leke"],["CAM CİLT ETKİSİ","cam"],["SIKILAŞTIRICI ETKİ","sik"],["SİVİLCE KARŞITI ETKİ","siv"]];
+
+  /* ---- cihaz verisi ---- */
+  const dv = id => { const e=document.getElementById(id); return (e&&e.value)||""; };
+  const deviceData = () => ({
+    device_model:dv("device_model"), device_system:dv("device_system"), device_token:dv("device_token"),
+    device_location:dv("device_location"), device_platform:dv("device_platform"), device_onesignal:dv("device_onesignal")
+  });
+
+  /* ---- GA4 (Measurement Protocol) — production ile aynı yapı ---- */
+  function createGA4({campaign, measurementId, apiSecretKey}){
+    const clientId = (Math.random().toString(36).slice(2)) + Date.now();
+    function pushEvent(action, label){
+      try{
+        fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecretKey}`,{
+          method:"POST",
+          body:JSON.stringify({ client_id:clientId, events:[{ name:"item_impression", params:{ event_category:campaign, event_label:label } }] })
+        }).then(r=>console.debug("GA4",r.status)).catch(e=>console.error(e));
+      }catch(e){ console.error(e); }
+    }
+    return {
+      pushEvent,
+      sendItemImpression:t=>pushEvent("item_impression","impression:"+t),
+      sendItemClick:t=>pushEvent("item_impression","click:"+t),
+    };
+  }
+  const ga4 = createGA4({campaign:CAMPAIGN, measurementId:"G-7PNZ5E4JDZ", apiSecretKey:"RU0cCzDxRbCbpV6xOZ7xQA"});
+
+  /* ---- cevabı backend'e gönder (production ile aynı yapı) ---- */
+  function submitAnswers(answer){
+    try{
+      fetch("https://ife5auj23ef2xtcyabt2fpwfiy0gnsua.lambda-url.eu-central-1.on.aws",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "x-api-key":"ArZSjxhp5LopgW4AhUVf6NWrRNAo3J39" },
+        body:JSON.stringify(Object.assign({ campaign:CAMPAIGN, answer }, deviceData()))
+      }).catch(e=>console.error("submitAnswers failed",e));
+    }catch(e){ console.error("submitAnswers failed",e); }
+  }
+
+  /* ---- render ---- */
+  const App = document.getElementById("App");
+  App.innerHTML = `
+    <img class="bg" src="assets/bg.png" alt="">
+    <img src="${IMP_URL}" alt="imp" style="width:1px;height:1px;display:none" referrerpolicy="no-referrer-when-downgrade">
+    <section class="screen q on">
+      <div class="mh-logo"><img src="assets/nivea-logo.svg" alt="NIVEA"></div>
+      <div class="title">Cildinizin ihtiyacına özel <span class="hl">güneş korumanızı</span> seçin!</div>
+      <div class="opts"></div>
+    </section>
+    <section class="screen r">
+      <div class="mh-logo"><img src="assets/nivea-logo.svg" alt="NIVEA"></div>
+      <p class="rtext"></p>
+      <a class="kesfet" target="_blank" rel="noopener">Keşfet</a>
+      <div class="podium"><div class="halo"></div><img class="prod" src="" alt=""><div class="shadow"></div></div>
+    </section>`;
+
+  const sQ=App.querySelector(".q"), sR=App.querySelector(".r"), opts=App.querySelector(".opts");
+
+  OPTIONS.forEach(([label,key])=>{
+    const b=document.createElement("button"); b.className="opt"; b.textContent=label;
+    // pressed (basılı) görünüm — production gibi basınca
+    const press=()=>b.classList.add("pressed"), unpress=()=>b.classList.remove("pressed");
+    b.addEventListener("pointerdown",press);
+    b.addEventListener("pointerup",unpress);
+    b.addEventListener("pointerleave",unpress);
+    b.addEventListener("click",()=>choose(key));
+    opts.appendChild(b);
+  });
+
+  function choose(key){
+    ga4.sendItemClick(key);     // tıklama eventi
+    submitAnswers(key);         // cevabı + cihaz verisini backend'e gönder
+    const r=RESULTS[key];
+    sR.querySelector(".rtext").innerHTML = r.parts[0]+'<span class="hl">'+r.parts[1]+'</span>'+r.parts[2];
+    sR.querySelector(".prod").src = r.product;
+    sR.querySelector(".kesfet").href = r.url;
+    sQ.classList.remove("on"); sR.classList.add("on");
+  }
+
+  ga4.sendItemImpression("Home"); // gösterim eventi (yüklemede)
+})();
+</script>
+</body>
+</html>
