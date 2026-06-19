@@ -89,3 +89,24 @@ Tarih: 2026-06-18
 - `business/` git deposuna çevrildi, GitHub'da `seymakucuk0/BusinessHTML` (public) olarak yayınlandı.
 - GitHub Pages açıldı; 3 proje için paylaşılabilir linkler oluşturuldu (bkz. [README.md](README.md)).
 - Commit'ler yalnızca `seymakucuk0` adına yazıldı (ek katkı sahibi yok).
+
+## 7. İş Bankası — Koşu Oyunu
+İnteraktif Bundlestition (pixel koşu oyunu) Figma'dan birebir alındı: giriş → "Hızlan"a seri bas
+(yol kayar, FINISH iner/karakter ilerler) → İstanbul Maratonu reklamı ("Hemen Kaydol"). Logo ve
+karakterin gömülü beyaz kutuları temizlendi (şeffaf), pop-up ölçü/konumları düzeltildi, X gerçekten kapatır.
+
+## 8. Dyson — Custom Masthead
+"Kış Fırsatları" carousel'i. Önce yaklaşık ölçeklenmişti; geri bildirim üzerine Figma'nın **birebir
+piksel değerleriyle** (panel 248, kart 202×250, başlık 34px…) yeniden kuruldu. 3 ürün **sonsuz
+döngüyle** kayar (oklar + sürükle), ekstra ürün eklenmedi.
+
+## 9. Knorr — İnteraktif Bundlestition
+Tinder usulü yemek eşleştirme. Figma'daki 2 eşleşme 4 kart boyunca döner; 4 kart sonrası sonuç
+(Acılı Ekşili Kış Çorbası). Geri bildirimlerle: ürün arkası şeffaflaştırıldı, pop-up ölçüsü/ortalaması
+düzeltildi, logo–başlık mesafesi ayarlandı, arkadaki kart düz bırakıldı.
+
+## 10. NIVEA — İnteraktif Masthead (responsive)
+Veri toplayan full-bleed yatay banner: 4 etki → seçime göre farklı ürün ekranı + farklı Keşfet
+yönlendirmesi. **Container-query** ile her ekrana ölçeklenir; iPhone 14 Pro / 15 Pro / 17 Pro Max /
+Samsung S20 cihaz önizlemesi. Şıka basınca Figma'daki solgun seçili hâl; soru→sonuç yatay kayma geçişi.
+Geri bildirim üzerine köşeler düz + tam genişlik (full-bleed) yapıldı.

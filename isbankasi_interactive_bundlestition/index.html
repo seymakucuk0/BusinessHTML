@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İş Bankası · İnteraktif Bundlestition (Koşu Oyunu)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{ --road:#1a52b0; --road-dark:#0f3f96; --rail:#4f9ff0; --dash:#bfe3ff; --header-bg:#f4f5f6; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:"Poppins",system-ui,sans-serif;background:#06060a;color:#fff;
+    min-height:100%;display:flex;flex-direction:column;align-items:center;gap:16px;padding:30px 18px 60px}
+  body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 700px at 50% 20%,#10204a 0%,#0a0c16 60%,#06060a 100%);z-index:0}
+  .caption{position:relative;text-align:center;z-index:1}
+  .caption .eyebrow{font:600 11px/1 "Poppins";letter-spacing:.22em;text-transform:uppercase;color:#7fb2ff}
+  .caption h1{margin:8px 0 0;font:700 20px/1.2 "Poppins";color:#fff}
+  .caption p{margin:5px 0 0;font:400 12.5px/1.4 "Poppins";color:#8f9bb3}
+
+  /* ===== phone ===== */
+  .phone{position:relative;z-index:1;width:414px;height:872px;flex:0 0 auto;
+    background:linear-gradient(150deg,#2c2533,#1b1820 60%,#221c2b);border-radius:58px;padding:13px;
+    box-shadow:0 0 0 2px #000,0 30px 70px -20px rgba(0,0,0,.85),inset 0 0 3px rgba(255,255,255,.18)}
+  .screen{position:relative;width:388px;height:846px;background:#fff;border-radius:46px;overflow:hidden;display:flex;flex-direction:column}
+
+  /* Bundle chrome */
+  .bundlebar{flex:0 0 auto;background:var(--header-bg);position:relative;z-index:5}
+  .statusbar{height:46px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 5px}
+  .statusbar .time{font:700 15px/1 "Roboto";color:#000}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}
+  .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:118px;height:32px;background:#000;border-radius:20px;z-index:2}
+  .tabs{display:flex;align-items:center;gap:16px;padding:3px 0 11px 16px;overflow:hidden}
+  .ham{display:flex;flex-direction:column;gap:4px;width:21px;flex:none}
+  .ham span{height:2px;border-radius:2px;background:#000}.ham span:last-child{width:13px}
+  .tab{font:700 13px/1 "Roboto";letter-spacing:.4px;text-transform:uppercase;color:#b3b3b3;white-space:nowrap}
+  .tab.on{font-weight:900;color:#000}
+
+  /* takeover area = Bundle feed + dimmed overlay + interstitial card */
+  .takeover{position:relative;flex:1 1 auto;overflow:hidden;background:#fff}
+
+  /* the real Bundle page behind (revealed when the ad is closed) */
+  .feed{position:absolute;inset:0;overflow:hidden;padding:12px 13px 0}
+  .grid{display:flex;gap:11px}
+  .col{flex:1 1 0;display:flex;flex-direction:column;gap:16px}
+  .ncard .thumb{width:100%;border-radius:9px;overflow:hidden;display:block;background:#eee}
+  .ncard .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .ncard .src{margin:8px 0 0;font:600 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#9c9c9c}
+  .ncard h3{margin:3px 0 0;color:#111;font:600 19px/1.12 "Barlow Condensed",sans-serif}
+  .ncard .time{margin:6px 0 0;font:600 11px/1 "Barlow Condensed",sans-serif;color:#aaa}
+
+  .dim{position:absolute;inset:0;background:rgba(7,12,30,.62);z-index:2;transition:opacity .35s}
+
+  .card{position:absolute;left:13px;right:13px;top:8px;bottom:13px;border-radius:22px;overflow:hidden;z-index:3;
+    background:var(--road-dark);box-shadow:0 22px 55px -16px rgba(0,0,0,.7);transition:opacity .3s, transform .3s}
+
+  .takeover.closed .dim{opacity:0;pointer-events:none}
+  .takeover.closed .card{opacity:0;pointer-events:none;transform:scale(.96)}
+
+  /* screens inside the card */
+  .scr{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .35s}
+  .scr.active{opacity:1;pointer-events:auto}
+  .scr img.full{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+  /* invisible click hotspots over baked buttons */
+  .hot{position:absolute;border:none;background:transparent;cursor:pointer;z-index:4}
+  .intro .start{left:5%;right:5%;top:79.5%;height:9%}
+  .result .kaydol{left:5%;width:66%;top:88.5%;height:6.5%}
+  .closehot{top:1.5%;right:2.5%;width:15%;height:7%}
+
+  .closeX{position:absolute;top:13px;right:13px;width:34px;height:34px;border-radius:50%;border:none;
+    background:rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center}
+  .closeX:hover{background:rgba(255,255,255,.32)}
+
+  /* ===== GAME screen ===== */
+  .game{background:var(--road-dark)}
+  .game .logo{position:absolute;top:18px;left:20px;width:138px;height:auto;z-index:5}
+  .road{position:absolute;left:0;right:0;top:60px;bottom:120px;background:var(--road);overflow:hidden}
+  .road .rail{position:absolute;top:-40px;bottom:-40px;width:11px;background:repeating-linear-gradient(180deg,var(--rail) 0 30px,transparent 30px 60px)}
+  .road .rail.left{left:14px}.road .rail.right{right:14px}
+  .road .dashes{position:absolute;left:50%;transform:translateX(-50%);top:-60px;bottom:-60px;width:11px;
+    background:repeating-linear-gradient(180deg,var(--dash) 0 30px,transparent 30px 64px)}
+  .road .finish{position:absolute;left:0;width:100%;height:auto;top:8px;image-rendering:pixelated;z-index:2}
+  .road .runner{position:absolute;left:50%;bottom:40px;width:64px;height:auto;transform:translateX(-50%);image-rendering:pixelated;z-index:3}
+  .road.run .runner{animation:bob .26s steps(2) infinite}
+  @keyframes bob{0%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-9px)}100%{transform:translateX(-50%) translateY(0)}}
+  .hizlan{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);width:280px;border:none;background:transparent;cursor:pointer;z-index:5;padding:0}
+  .hizlan img{width:100%;display:block;image-rendering:pixelated}
+  .hizlan:active{transform:translateX(-50%) scale(.97)}
+  .instr{position:absolute;left:0;right:0;bottom:20px;text-align:center;font:500 12px/1.3 "Poppins";color:#dbe8ff;z-index:5}
+
+  .restart{position:fixed;right:16px;bottom:16px;z-index:50;cursor:pointer;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18);color:#cfd6e6;font:600 12px/1 "Poppins";padding:9px 13px;border-radius:8px}
+  .restart:hover{background:rgba(255,255,255,.16)}
+</style>
+</head>
+<body>
+  <div class="caption">
+    <div class="eyebrow">Bundle · İnteraktif Bundlestition</div>
+    <h1>İş Bankası — Koşu Oyunu</h1>
+    <p>Oyuna başla → "Hızlan"a seri bas → FINISH → maraton reklamı. X reklamı kapatır.</p>
+  </div>
+
+  <div class="phone">
+    <div class="screen">
+
+      <!-- Bundle chrome -->
+      <div class="bundlebar">
+        <div class="island"></div>
+        <div class="statusbar">
+          <span class="time">9:41</span>
+          <span class="icons">
+            <svg width="18" height="12" viewBox="0 0 18 12"><g fill="#000"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0.5" width="3" height="11.5" rx="1"/></g></svg>
+            <svg width="17" height="12" viewBox="0 0 17 12"><path fill="#000" d="M8.5 2.2c2.6 0 5 1 6.8 2.7l1.3-1.4C14.5 1.4 11.6.2 8.5.2 5.4.2 2.5 1.4.4 3.5l1.3 1.4C3.5 3.2 5.9 2.2 8.5 2.2z"/></svg>
+            <svg width="26" height="13" viewBox="0 0 26 13"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" fill="none" stroke="#000" stroke-opacity=".35"/><rect x="2" y="2" width="17.5" height="9" rx="2" fill="#000"/><rect x="23.5" y="4" width="1.6" height="5" rx="0.8" fill="#000" fill-opacity=".4"/></svg>
+          </span>
+        </div>
+        <div class="tabs">
+          <div class="ham"><span></span><span></span><span></span></div>
+          <span class="tab on">Tümü</span><span class="tab">Gündem</span><span class="tab">Teknoloji</span><span class="tab">Finans</span><span class="tab">Bilim</span>
+        </div>
+      </div>
+
+      <div class="takeover" id="takeover">
+
+        <!-- the Bundle page behind (visible when the ad is closed) -->
+        <div class="feed">
+          <div class="grid">
+            <div class="col">
+              <article class="ncard"><span class="thumb" style="aspect-ratio:166/133"><img src="assets/news-applewatch.png" alt=""></span>
+                <p class="src">Euronews Türkçe</p><h3>Apple, 15 Eylül'de gerçekleştirdiği etkinlikte Apple Watch Series</h3><p class="time">2 dakika</p></article>
+              <article class="ncard"><span class="thumb" style="aspect-ratio:166/148"><img src="assets/news-meghan.png" alt=""></span>
+                <p class="src">NTV</p><h3>Meghan Markle ve Prens Harry'nin oğlu Archie prens olamayacak</h3><p class="time">2 dakika</p></article>
+            </div>
+            <div class="col">
+              <article class="ncard"><span class="thumb" style="aspect-ratio:168/141"><img src="assets/news-rocket.png" alt=""></span>
+                <p class="src">Anadolu Ajansı</p><h3>Japon milyarder, Ay seyahati için kendisine eşlik edecek 8 kişi arıyor</h3><p class="time">4 dakika</p></article>
+              <article class="ncard"><span class="thumb" style="aspect-ratio:168/138"><img src="assets/news-volcano.png" alt=""></span>
+                <p class="src">Arkeofili</p><h3>Yanardağ, Erken İnsanları Aşırı Güneş Yanığına Maruz Bırakmış</h3><p class="time">24 dakika</p></article>
+            </div>
+          </div>
+        </div>
+
+        <!-- dim layer over the feed -->
+        <div class="dim"></div>
+
+        <!-- interstitial card (inset with side+bottom padding, rounded) -->
+        <div class="card" id="card">
+
+          <!-- INTRO -->
+          <section class="scr intro active" id="s-intro">
+            <img class="full" src="assets/intro.png" alt="Ne kadar hızlı koşabilirsin?">
+            <button class="hot start" id="startBtn" aria-label="Oyuna Başla"></button>
+            <button class="hot closehot" data-close aria-label="Kapat"></button>
+          </section>
+
+          <!-- GAME -->
+          <section class="scr game" id="s-game">
+            <img class="logo" src="assets/isbank-logo.svg" alt="Türkiye İş Bankası">
+            <button class="closeX" data-close>×</button>
+            <div class="road" id="road">
+              <div class="rail left"></div><div class="rail right"></div>
+              <div class="dashes" id="dashes"></div>
+              <img class="finish" id="finish" src="assets/finish.png" alt="FINISH">
+              <img class="runner" id="runner" src="assets/character.png" alt="">
+            </div>
+            <button class="hizlan" id="hizlanBtn"><img src="assets/hizlan.png" alt="Hızlan"></button>
+            <p class="instr">Hızlanmak için butona seri basın.</p>
+          </section>
+
+          <!-- RESULT -->
+          <section class="scr result" id="s-result">
+            <img class="full" src="assets/result.png" alt="İstanbul Maratonu — Hemen Kaydol">
+            <button class="hot kaydol" id="kaydolBtn" aria-label="Hemen Kaydol"></button>
+            <button class="hot closehot" data-close aria-label="Kapat"></button>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="restart" id="restartBtn">↺ Reklamı baştan aç</button>
+
+<script>
+  const KAYIT_URL = "https://www.maraton.istanbul/"; // placeholder — gerçek kayıt URL'i ile değiştirilebilir
+
+  const takeover=document.getElementById('takeover');
+  const scr = { intro:document.getElementById('s-intro'), game:document.getElementById('s-game'), result:document.getElementById('s-result') };
+  function show(name){ for(const k in scr) scr[k].classList.toggle('active', k===name); }
+
+  const road=document.getElementById('road'), dashes=document.getElementById('dashes'),
+        finish=document.getElementById('finish'), runner=document.getElementById('runner');
+
+  let raf=null, speed=0, progress=0, offset=0, playing=false;
+  const BASE=1.4, BOOST=7, DECAY=0.93, STEP=0.04; // ~25 tap
+
+  function loop(){
+    speed = Math.max(BASE, speed*DECAY);
+    offset += speed;
+    dashes.style.backgroundPositionY = offset+'px';
+    road.querySelectorAll('.rail').forEach(r=>r.style.backgroundPositionY = offset+'px');
+    // FINISH sabit durur; karakter aşağıdan yukarı, finish'e doğru minik minik ilerler
+    const H = road.clientHeight;
+    const startBottom = 40;
+    const endBottom = H - finish.clientHeight - 12 - runner.clientHeight;
+    runner.style.bottom = (startBottom + progress*(endBottom - startBottom)) + 'px';
+    if(progress>=1){ return finishGame(); }
+    if(playing) raf=requestAnimationFrame(loop);
+  }
+  function startGame(){ show('game'); playing=true; speed=BASE; progress=0; offset=0; runner.style.bottom='40px'; road.classList.add('run');
+    cancelAnimationFrame(raf); raf=requestAnimationFrame(loop); }
+  function tap(){ if(!playing) return; speed += BOOST; progress = Math.min(1, progress+STEP); }
+  function finishGame(){ playing=false; cancelAnimationFrame(raf); road.classList.remove('run'); setTimeout(()=>show('result'), 650); }
+
+  function closeAd(){ takeover.classList.add('closed'); playing=false; cancelAnimationFrame(raf); road.classList.remove('run'); }
+  function reopen(){ takeover.classList.remove('closed'); playing=false; cancelAnimationFrame(raf); road.classList.remove('run'); progress=0; speed=0; offset=0; show('intro'); }
+
+  document.getElementById('startBtn').addEventListener('click', startGame);
+  document.getElementById('hizlanBtn').addEventListener('pointerdown', e=>{ e.preventDefault(); tap(); });
+  window.addEventListener('keydown', e=>{ if(scr.game.classList.contains('active') && !takeover.classList.contains('closed') && (e.code==='Space'||e.code==='Enter')){ e.preventDefault(); tap(); }});
+  document.getElementById('kaydolBtn').addEventListener('click', ()=>window.open(KAYIT_URL,'_blank'));
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', closeAd));
+  document.getElementById('restartBtn').addEventListener('click', reopen);
+
+  function route(){ const h=location.hash; if(h==='#game') startGame(); else if(h==='#result') show('result'); else if(h==='#closed') closeAd(); else show('intro'); }
+  window.addEventListener('hashchange', route); route();
+</script>
+</body>
+</html>

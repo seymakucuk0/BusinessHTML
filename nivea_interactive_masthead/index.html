@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NIVEA · İnteraktif Masthead — Cihaz Önizleme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Barlow+Condensed:wght@500;600;700&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{ --nivea:#1c359b; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:"Nunito",system-ui,Arial,sans-serif;min-height:100%;
+    background:radial-gradient(1100px 700px at 50% -5%,#22304a 0%,#10151f 60%,#0a0d14 100%);color:#e8edf6;
+    display:flex;flex-direction:column;align-items:center;gap:8px;padding:34px 18px 70px}
+  .cap{text-align:center;margin-bottom:14px}
+  .cap .eyebrow{font:700 11px/1 "Nunito";letter-spacing:.22em;text-transform:uppercase;color:#86a8e0}
+  .cap h1{margin:8px 0 0;font:800 21px/1.2 "Nunito";color:#fff}
+  .cap p{margin:6px 0 0;font:600 12.5px/1.5 "Nunito";color:#93a3c2;max-width:560px}
+
+  .devices{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:26px}
+  .dev-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .dev-frame{position:relative}
+  .device{position:absolute;top:0;left:0;transform-origin:top left;background:linear-gradient(150deg,#34373d,#17181c 55%,#26282e);
+    box-shadow:0 26px 60px -22px rgba(0,0,0,.85),0 0 0 2px #000}
+  .device.android{background:linear-gradient(150deg,#2b2c30,#121316 60%)}
+  .dscreen{position:absolute;background:#fff;overflow:hidden;display:flex;flex-direction:column}
+  .dev-label{font:700 12.5px/1.3 "Nunito";color:#cfd9ee;text-align:center}
+  .dev-label span{display:block;font-weight:600;font-size:11px;color:#8295b7;margin-top:2px}
+
+  /* status bar */
+  .dstatus{position:relative;flex:0 0 auto;display:flex;align-items:flex-end;justify-content:space-between}
+  .dstatus .time{font:700 15px/1 "Roboto";color:#000}
+  .dstatus .sicons{display:flex;align-items:center;gap:6px}
+  .island{position:absolute;left:50%;transform:translateX(-50%);background:#000;border-radius:20px}
+  .punch{position:absolute;left:50%;transform:translateX(-50%);background:#000;border-radius:50%}
+  /* tabs */
+  .dtabs{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:4px 0 11px 16px;overflow:hidden;background:#f4f5f6}
+  .dtabs .ham{display:flex;flex-direction:column;gap:4px;width:21px}
+  .dtabs .ham span{height:2px;border-radius:2px;background:#000}.dtabs .ham span:last-child{width:13px}
+  .dtabs .tab{font:700 13px/1 "Roboto";letter-spacing:.4px;text-transform:uppercase;color:#b3b3b3;white-space:nowrap}
+  .dtabs .tab.on{font-weight:900;color:#000}
+  .dmasthead{padding:0}  /* full-bleed: yanlardan boşluk yok */
+  .dfeed{padding:14px 11px 0;display:flex;gap:9px}
+  .dfeed .col{flex:1;display:flex;flex-direction:column;gap:13px}
+  .dfeed .nc .th{width:100%;border-radius:8px;overflow:hidden;display:block;background:#eee}
+  .dfeed .nc .th img{width:100%;height:100%;object-fit:cover;display:block}
+  .dfeed .nc .s{margin:6px 0 0;font:600 9px/1 "Barlow Condensed";letter-spacing:.05em;text-transform:uppercase;color:#9c9c9c}
+  .dfeed .nc h4{margin:2px 0 0;font:600 15px/1.12 "Barlow Condensed";color:#111}
+
+  /* ====== responsive masthead (container queries) ====== */
+  .masthead{container-type:inline-size;position:relative;width:100%;aspect-ratio:948/416;
+    overflow:hidden;background:#bcd6ea}  /* Figma: düz köşe, tam genişlik */
+  .masthead .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .mh-logo{position:absolute;z-index:3}.mh-logo img{width:100%;height:100%;display:block}
+  .screen{position:absolute;inset:0;z-index:2;opacity:0;pointer-events:none;
+    transition:transform .52s cubic-bezier(.6,0,.18,1), opacity .42s}
+  .q{transform:translateX(-100%)}      /* soru: sola kayar */
+  .r{transform:translateX(100%)}       /* sonuç: sağdan gelir */
+  .screen.on{opacity:1;pointer-events:auto;transform:translateX(0)}
+  .q .mh-logo{top:11.3%;right:5.7%;width:11.2cqw;aspect-ratio:1}
+  .q .title{position:absolute;left:6.6%;top:11%;width:69%;color:#fff;font:800 5.3cqw/1.06 "Nunito";letter-spacing:-.01em}
+  .q .title .hl{color:var(--nivea)}
+  .opts{position:absolute;left:50%;transform:translateX(-50%);top:43.5%;width:86.3%;display:grid;grid-template-columns:1fr 1fr;gap:1.9cqw}
+  .opt{cursor:pointer;border:none;background:#fff;color:var(--nivea);border-radius:100px;height:9cqw;
+    display:flex;align-items:center;justify-content:center;padding:0 2cqw;font:800 3.15cqw/1 "Nunito";
+    text-transform:uppercase;letter-spacing:.01em;white-space:nowrap;box-shadow:0 .5cqw 1.5cqw rgba(20,40,90,.18);transition:transform .12s,background .15s}
+  .opt:hover{background:#eef3ff}
+  .opt:active{transform:scale(.97)}
+  .opt.pressed{background:rgba(255,255,255,.3);font-weight:600;box-shadow:none}  /* Figma pressed state */
+  .r .mh-logo{top:7%;left:5.5%;width:8.4cqw;aspect-ratio:1}
+  .r .rtext{position:absolute;left:6.2%;top:26.5%;width:49%;color:#fff;font:800 2.95cqw/1.2 "Nunito"}
+  .r .rtext .hl{color:var(--nivea)}
+  .r .kesfet{position:absolute;left:6.4%;top:75%;cursor:pointer;border:none;background:var(--nivea);color:#fff;border-radius:100px;
+    padding:0 4.5cqw;height:6.6cqw;display:flex;align-items:center;justify-content:center;font:700 3.15cqw/1 "Nunito";
+    box-shadow:0 .6cqw 1.6cqw rgba(20,40,90,.3);transition:transform .12s,filter .15s}
+  .r .kesfet:hover{filter:brightness(1.1)}.r .kesfet:active{transform:scale(.97)}
+  .r .podium{position:absolute;right:4%;top:6%;width:40%;height:88%;z-index:1}
+  .r .podium .halo{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:84%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(255,255,255,.55),rgba(255,255,255,0) 72%)}
+  .r .podium .prod{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);height:84%;width:auto;z-index:2;
+    filter:drop-shadow(0 3cqw 2.5cqw rgba(20,40,90,.28))}
+  .r .podium .shadow{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);width:46%;height:2.4%;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(30,60,120,.4),rgba(30,60,120,0) 75%)}
+
+  .hint{margin-top:8px;font:600 12px/1.5 "Nunito";color:#8295b7;text-align:center;max-width:560px}
+</style>
+</head>
+<body>
+  <div class="cap">
+    <div class="eyebrow">NIVEA · İnteraktif Masthead</div>
+    <h1>Cihaz Önizleme — responsive</h1>
+    <p>Aynı masthead 4 farklı ekran genişliğinde. Bir etki seç → şık önce Figma'daki <b>seçili (solgun) hâle</b> geçer, sonra eşleşen ürün ekranı açılır. Sonuç ekranına (Keşfet hariç) dokununca soruya döner.</p>
+  </div>
+
+  <div class="devices" id="devices"></div>
+
+  <p class="hint">Keşfet linkleri: Leke → bit.ly/4fVLFSR · Cam → bit.ly/4w2UwHi · Sıkılaştırıcı → bit.ly/4vmDfJe · Sivilce → bit.ly/3ShUiNU</p>
+
+<script>
+  const IMP_URL="https://bit.ly/4oyzcqo";
+  const RESULTS = {
+    leke:{product:"assets/prod-luminous.png",parts:["Aydınlık bir cilt için ","NIVEA Luminous630 Günlük UV Yüz Bakım Kremi SPF50"," ile yüksek güneş koruması & leke karşıtı etki"],url:"https://bit.ly/4fVLFSR"},
+    cam: {product:"assets/prod-skinglow.png",parts:["Cam cilt etkisi için ","NIVEA Skin Glow Günlük UV Fluid SPF50"," ile yüksek güneş koruması & anında 3 boyutlu parlaklık"],url:"https://bit.ly/4w2UwHi"},
+    sik: {product:"assets/prod-q10.png",parts:["Daha sıkı bir cilt için ","NIVEA Q10 Günlük UV Fluid SPF50"," ile yüksek güneş koruması & kırışıklık karşıtı etki"],url:"https://bit.ly/4vmDfJe"},
+    siv: {product:"assets/prod-derma.png",parts:["Pürüzsüz bir cilt için ","NIVEA Derma Skin Clear Günlük UV Fluid SPF50"," ile yüksek güneş koruması & sivilce karşıtı etki"],url:"https://bit.ly/3ShUiNU"},
+  };
+  const OPTIONS=[["LEKE KARŞITI ETKİ","leke"],["CAM CİLT ETKİSİ","cam"],["SIKILAŞTIRICI ETKİ","sik"],["SİVİLCE KARŞITI ETKİ","siv"]];
+
+  const MH = `<img class="bg" src="assets/bg.png" alt="">
+    <section class="screen q on">
+      <div class="mh-logo"><img src="assets/nivea-logo.svg" alt="NIVEA"></div>
+      <div class="title">Cildinizin ihtiyacına özel <span class="hl">güneş korumanızı</span> seçin!</div>
+      <div class="opts"></div>
+    </section>
+    <section class="screen r">
+      <div class="mh-logo"><img src="assets/nivea-logo.svg" alt="NIVEA"></div>
+      <p class="rtext"></p>
+      <button class="kesfet">Keşfet</button>
+      <div class="podium"><div class="halo"></div><img class="prod" src="" alt=""><div class="shadow"></div></div>
+    </section>`;
+
+  function mountMasthead(el){
+    el.innerHTML = MH;
+    const sQ=el.querySelector('.q'), sR=el.querySelector('.r'), opts=el.querySelector('.opts');
+    OPTIONS.forEach(([label,key])=>{
+      const b=document.createElement('button'); b.className='opt'; b.textContent=label;
+      b.addEventListener('click',()=>{
+        if(el.dataset.busy) return; el.dataset.busy='1';
+        b.classList.add('pressed');                         // Figma seçili/pressed hâli
+        setTimeout(()=>{ result(el,key); b.classList.remove('pressed'); el.dataset.busy=''; }, 520);
+      });
+      opts.appendChild(b);
+    });
+    sR.addEventListener('click',e=>{ if(e.target.closest('.kesfet'))return; sR.classList.remove('on'); sQ.classList.add('on'); });
+  }
+  function result(el,key){
+    const r=RESULTS[key];
+    el.querySelector('.rtext').innerHTML = r.parts[0]+'<span class="hl">'+r.parts[1]+'</span>'+r.parts[2];
+    el.querySelector('.prod').src = r.product;
+    el.querySelector('.kesfet').onclick = ()=>window.open(r.url,'_blank');
+    el.querySelector('.q').classList.remove('on'); el.querySelector('.r').classList.add('on');
+  }
+
+  const ICONS = `<svg width="18" height="12" viewBox="0 0 18 12"><g fill="#000"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0.5" width="3" height="11.5" rx="1"/></g></svg>
+    <svg width="17" height="12" viewBox="0 0 17 12"><path fill="#000" d="M8.5 2.2c2.6 0 5 1 6.8 2.7l1.3-1.4C14.5 1.4 11.6.2 8.5.2 5.4.2 2.5 1.4.4 3.5l1.3 1.4C3.5 3.2 5.9 2.2 8.5 2.2z"/></svg>
+    <svg width="26" height="13" viewBox="0 0 26 13"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" fill="none" stroke="#000" stroke-opacity=".35"/><rect x="2" y="2" width="17.5" height="9" rx="2" fill="#000"/><rect x="23.5" y="4" width="1.6" height="5" rx="0.8" fill="#000" fill-opacity=".4"/></svg>`;
+  const FEED = `<div class="col">
+      <article class="nc"><span class="th" style="aspect-ratio:166/133"><img src="assets/news-applewatch.png"></span><p class="s">Euronews Türkçe</p><h4>Apple, 15 Eylül'de gerçekleştirdiği etkinlikte Apple Watch Series</h4></article>
+    </div>
+    <div class="col">
+      <article class="nc"><span class="th" style="aspect-ratio:168/141"><img src="assets/news-rocket.png"></span><p class="s">Anadolu Ajansı</p><h4>Japon milyarder, Ay seyahati için 8 kişi arıyor</h4></article>
+    </div>`;
+
+  const DEVICES=[
+    {name:'iPhone 14 Pro', res:'393 × 852', w:393,h:852,bezel:11,radius:54,island:true},
+    {name:'iPhone 15 Pro', res:'393 × 852', w:393,h:852,bezel:11,radius:54,island:true},
+    {name:'iPhone 17 Pro Max', res:'440 × 956', w:440,h:956,bezel:12,radius:60,island:true},
+    {name:'Samsung S20', res:'360 × 800', w:360,h:800,bezel:8,radius:30,island:false},
+  ];
+  const TARGET_H = 540;
+  const host=document.getElementById('devices');
+  DEVICES.forEach(d=>{
+    const DW=d.w+d.bezel*2, DH=d.h+d.bezel*2, s=TARGET_H/DH;
+    const wrap=document.createElement('div'); wrap.className='dev-wrap';
+    const frame=document.createElement('div'); frame.className='dev-frame';
+    frame.style.width=(DW*s)+'px'; frame.style.height=(DH*s)+'px';
+    const statusH = d.island?54:34;
+    const island = d.island
+      ? `<div class="island" style="top:11px;width:${Math.round(d.w*0.3)}px;height:34px"></div>`
+      : `<div class="punch" style="top:13px;width:13px;height:13px"></div>`;
+    frame.innerHTML = `<div class="device ${d.island?'ios':'android'}" style="width:${DW}px;height:${DH}px;border-radius:${d.radius+d.bezel}px;padding:${d.bezel}px;transform:scale(${s})">
+      <div class="dscreen" style="width:${d.w}px;height:${d.h}px;border-radius:${d.radius}px">
+        ${island}
+        <div class="dstatus" style="height:${statusH}px;padding:0 ${d.island?26:20}px 6px"><span class="time">9:41</span><span class="sicons">${ICONS}</span></div>
+        <div class="dtabs"><div class="ham"><span></span><span></span><span></span></div><span class="tab on">Tümü</span><span class="tab">Gündem</span><span class="tab">Teknoloji</span><span class="tab">Finans</span></div>
+        <div class="dmasthead"><div class="masthead"></div></div>
+        <div class="dfeed">${FEED}</div>
+      </div></div>`;
+    wrap.appendChild(frame);
+    const label=document.createElement('div'); label.className='dev-label'; label.innerHTML=`${d.name}<span>${d.res} pt</span>`;
+    wrap.appendChild(label);
+    host.appendChild(wrap);
+    mountMasthead(frame.querySelector('.masthead'));
+  });
+</script>
+</body>
+</html>
