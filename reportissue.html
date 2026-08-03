@@ -175,8 +175,6 @@
     #bundle-report-final .rf-sheet-head h2 { margin: 0; text-align: center; font-size: 18px; font-weight: 500; letter-spacing: 0; }
     #bundle-report-final .rf-back { appearance: none; border: 0; width: 42px; height: 42px; background: transparent; color: var(--rf-text); display: grid; place-items: center; visibility: hidden; cursor: pointer; }
     #bundle-report-final .rf-back.is-visible { visibility: visible; }
-    #bundle-report-final .rf-source { margin: 0 0 8px; color: var(--rf-muted); text-align: center; font-size: 12px; }
-    #bundle-report-final .rf-source strong { color: var(--rf-text); font-weight: 500; }
     #bundle-report-final .rf-step { display: none; }
     #bundle-report-final .rf-step.is-active { display: block; }
 
@@ -283,7 +281,6 @@
       </div>
 
       <div class="rf-step is-active" data-step="list">
-        <p class="rf-source"><strong>NTV Spor</strong> üzerinden gösteriliyor</p>
         <div>
           <button class="rf-option" type="button" data-category="Uygunsuz / Yanıltıcı İçerik">
             <svg class="rf-line-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 8h18v11H12l-5 5V8Z"/><path d="m21 18.5 4.5 7.5h-9L21 18.5Z"/><path d="M21 21.5v1.8M21 25h.01"/></svg><span>Uygunsuz / Yanıltıcı İçerik</span><svg class="rf-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
@@ -322,6 +319,7 @@
       var note = root.querySelector("[data-note]");
       var selected = root.querySelector("[data-selected]");
       var submit = root.querySelector("[data-submit]");
+      var requiresNote = true;
 
       function showStep(name) {
         root.querySelectorAll("[data-step]").forEach(function (step) {
@@ -345,7 +343,7 @@
       }
 
       function updateSubmit() {
-        submit.disabled = note.value.trim().length === 0;
+        submit.disabled = requiresNote && note.value.trim().length === 0;
       }
 
       root.querySelector("[data-open-menu]").addEventListener("click", function () {
@@ -356,6 +354,7 @@
       root.querySelectorAll("[data-category]").forEach(function (button) {
         button.addEventListener("click", function () {
           var category = button.getAttribute("data-category");
+          requiresNote = category === "Diğer";
           selected.textContent = category;
           note.value = "";
           note.placeholder = category === "Diğer" ? "Sorunu kısaca anlat" : "Detay ekleyebilirsin";
