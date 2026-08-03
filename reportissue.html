@@ -216,8 +216,7 @@
     }
 
     #bundle-report-final textarea::placeholder { color: var(--rf-muted); }
-    #bundle-report-final .rf-field-meta { height: 27px; padding-top: 7px; color: var(--rf-muted); font-size: 12px; }
-    #bundle-report-final .rf-field-meta:empty { visibility: hidden; }
+    #bundle-report-final .rf-field-space { height: 27px; }
     #bundle-report-final .rf-submit {
       appearance: none;
       border: 0;
@@ -232,9 +231,6 @@
     }
 
     #bundle-report-final .rf-submit:disabled { background: var(--rf-disabled); color: var(--rf-muted); cursor: default; }
-    #bundle-report-final .rf-sent { padding-top: 57px; text-align: center; }
-    #bundle-report-final .rf-sent-icon { width: 54px; height: 54px; margin: 0 auto 17px; border-radius: 50%; display: grid; place-items: center; color: var(--rf-red); background: color-mix(in srgb, var(--rf-red) 12%, transparent); }
-    #bundle-report-final .rf-sent h3 { margin: 0 0 30px; font-size: 20px; font-weight: 500; letter-spacing: 0; }
     #bundle-report-final svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
     #bundle-report-final .rf-nav-icon { width: 22px; height: 22px; stroke-width: 2.2; }
     #bundle-report-final .rf-line-icon { width: 31px; height: 31px; color: var(--rf-red); stroke-width: 1.9; }
@@ -289,16 +285,16 @@
       <div class="rf-step is-active" data-step="list">
         <p class="rf-source"><strong>NTV Spor</strong> üzerinden gösteriliyor</p>
         <div>
-          <button class="rf-option" type="button" data-category="Uygunsuz / Yanıltıcı İçerik" data-required="false">
+          <button class="rf-option" type="button" data-category="Uygunsuz / Yanıltıcı İçerik">
             <svg class="rf-line-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 8h18v11H12l-5 5V8Z"/><path d="m21 18.5 4.5 7.5h-9L21 18.5Z"/><path d="M21 21.5v1.8M21 25h.01"/></svg><span>Uygunsuz / Yanıltıcı İçerik</span><svg class="rf-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
           </button>
-          <button class="rf-option" type="button" data-category="Bozuk ya da Hatalı İçerik" data-required="false">
+          <button class="rf-option" type="button" data-category="Bozuk ya da Hatalı İçerik">
             <svg class="rf-line-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 8h18v11H12l-5 5V8Z"/><path d="M19 18v3M15.5 19.5h7m-6 4.5 2-2 2 2 2-2"/></svg><span>Bozuk ya da Hatalı İçerik</span><svg class="rf-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
           </button>
-          <button class="rf-option" type="button" data-category="Reklam Ekranı Kaplıyor" data-required="false">
+          <button class="rf-option" type="button" data-category="Reklam Ekranı Kaplıyor">
             <svg class="rf-line-icon" viewBox="0 0 32 32" aria-hidden="true"><rect x="8" y="5" width="16" height="22" rx="3"/><path d="M16 11v6M16 20h.01"/><circle cx="22" cy="10" r="4"/></svg><span>Reklam Ekranı Kaplıyor</span><svg class="rf-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
           </button>
-          <button class="rf-option" type="button" data-category="Diğer" data-required="true">
+          <button class="rf-option" type="button" data-category="Diğer">
             <svg class="rf-line-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 6 27 25H5L16 6Z"/><path d="M16 13v6M16 22h.01"/></svg><span>Diğer</span><svg class="rf-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
           </button>
         </div>
@@ -310,16 +306,8 @@
           <strong data-selected>Diğer</strong>
         </div>
         <textarea data-note aria-label="Rapor açıklaması" placeholder="Sorunu kısaca anlat"></textarea>
-        <div class="rf-field-meta" data-field-meta></div>
+        <div class="rf-field-space" aria-hidden="true"></div>
         <button class="rf-submit" type="button" data-submit disabled>Gönder</button>
-      </div>
-
-      <div class="rf-step" data-step="sent">
-        <div class="rf-sent">
-          <div class="rf-sent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <h3>Rapor gönderildi</h3>
-          <button class="rf-submit" type="button" data-close>Tamam</button>
-        </div>
       </div>
     </section>
   </div>
@@ -332,10 +320,8 @@
       var sheet = root.querySelector("[data-sheet]");
       var back = root.querySelector("[data-back]");
       var note = root.querySelector("[data-note]");
-      var fieldMeta = root.querySelector("[data-field-meta]");
       var selected = root.querySelector("[data-selected]");
       var submit = root.querySelector("[data-submit]");
-      var required = true;
 
       function showStep(name) {
         root.querySelectorAll("[data-step]").forEach(function (step) {
@@ -359,7 +345,7 @@
       }
 
       function updateSubmit() {
-        submit.disabled = required && note.value.trim().length === 0;
+        submit.disabled = note.value.trim().length === 0;
       }
 
       root.querySelector("[data-open-menu]").addEventListener("click", function () {
@@ -369,11 +355,10 @@
       root.querySelector("[data-report-trigger]").addEventListener("click", openSheet);
       root.querySelectorAll("[data-category]").forEach(function (button) {
         button.addEventListener("click", function () {
-          required = button.getAttribute("data-required") === "true";
-          selected.textContent = button.getAttribute("data-category");
+          var category = button.getAttribute("data-category");
+          selected.textContent = category;
           note.value = "";
-          note.placeholder = required ? "Sorunu kısaca anlat" : "Detay ekleyebilirsin";
-          fieldMeta.textContent = required ? "" : "Opsiyonel";
+          note.placeholder = category === "Diğer" ? "Sorunu kısaca anlat" : "Detay ekleyebilirsin";
           updateSubmit();
           showStep("detail");
         });
@@ -381,8 +366,7 @@
 
       note.addEventListener("input", updateSubmit);
       back.addEventListener("click", function () { showStep("list"); });
-      submit.addEventListener("click", function () { if (!submit.disabled) showStep("sent"); });
-      root.querySelector("[data-close]").addEventListener("click", closeSheet);
+      submit.addEventListener("click", function () { if (!submit.disabled) closeSheet(); });
       scrim.addEventListener("click", closeSheet);
     }());
   </script>
