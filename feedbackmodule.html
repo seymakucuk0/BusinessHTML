@@ -129,7 +129,11 @@
       transition: width .22s ease, color .18s ease;
     }
 
-    .like-button .heart-fill { display: none; }
+    .like-button .heart-fill {
+      display: none;
+      fill: var(--like-red);
+      stroke: var(--like-red);
+    }
 
     .like-button .like-count {
       max-width: 0;
@@ -147,7 +151,12 @@
 
     .like-button.is-liked .heart-outline { display: none; }
     .like-button.is-liked .heart-fill { display: block; }
-    .like-button.is-liked .like-count { max-width: 28px; margin-left: 5px; opacity: 1; }
+    .like-button.is-liked .like-count {
+      max-width: 28px;
+      margin-left: 5px;
+      opacity: 1;
+      color: var(--text);
+    }
 
     .ad {
       height: 40px;
