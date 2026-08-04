@@ -416,8 +416,8 @@
 
   // order is the shipped order; `free` marks what a non-Premium user can select
   const TONES = [
-    { id: 'bundle_default', name: 'Bundle Tonu', free: true },
     { id: 'system', name: 'Telefon Varsayılanı', free: true, system: true },
+    { id: 'bundle_default', name: 'Bundle Tonu', free: true },
     { id: 'messenger', name: 'Echo', free: true },
     { id: 'mic_percussion', name: 'Knock', free: true },
     { id: 'beep_boop', name: 'Signal' },
@@ -444,7 +444,8 @@
     try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
     const s = saved && typeof saved === 'object' ? saved : {};
     return {
-      tone: byId(s.tone) ? s.tone : DEFAULT_TONE,
+      // The prototype always opens with Bundle Tonu selected.
+      tone: DEFAULT_TONE,
       mode: MODES.some(m => m.id === s.mode) ? s.mode : 'default',
       premium: s.premium === true
     };
