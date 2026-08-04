@@ -8,7 +8,8 @@ Amaç: tekrar eden reklam ailelerinde (masthead, quiz, advertorial vb.) ilk mock
 
 | Proje | Açıklama | Link |
 | --- | --- | --- |
-| **Ana sayfa** | 7 demoya açılan vitrin | https://seymakucuk0.github.io/BusinessHTML/ |
+| **Ana sayfa** | 8 demoya açılan vitrin | https://seymakucuk0.github.io/BusinessHTML/ |
+| **Notification Settings** | Bildirim modu, özel ton ve Premium kilit akışı | https://seymakucuk0.github.io/BusinessHTML/notificationsettings.html |
 | **Carte d'Or — Interactive Masthead** | Soru → öneri kayan masthead | https://seymakucuk0.github.io/BusinessHTML/cartedor_interactive_masthead/ |
 | **Bioderma — Interactive Masthead** | Yeşil soru → ürün öneri masthead | https://seymakucuk0.github.io/BusinessHTML/bioderma_interactive_masthead/ |
 | **Jolly — Dünya Kupası Quiz** | Tam ekran, skor bazlı quiz akışı | https://seymakucuk0.github.io/BusinessHTML/jolly_worldcup_quiz/ |
@@ -56,6 +57,12 @@ yeşil "Satın al". Figma'nın birebir piksel ölçüleriyle kuruldu.
 seçime göre **farklı ürün ekranı** (Luminous630 / Skin Glow / Q10 / Derma Skin Clear), her birinin
 **farklı Keşfet yönlendirmesi**. **Responsive** (container-query ile her ekrana ölçeklenir); ayrıca
 iPhone 14 Pro / 15 Pro / 17 Pro Max / Samsung S20 cihaz önizlemesi.
+
+### 8) `notificationsettings.html`
+Bundle bildirim tercihleri ve özel bildirim tonu prototipi. Tek telefon ekranında bildirim
+tercihlerinden ses ayarına geçiş, iOS / Android ve açık / koyu tema seçimi, ses önizleme,
+ücretsiz tonlar ve Premium kilit akışı bulunur. Ses dosyaları HTML içine gömülüdür; prototip
+tek dosya olarak çalışır.
 
 ## 🎨 Yöntem
 - Tasarımlar Figma MCP ile incelendi; renkler, metinler, fontlar ve görseller **doğrudan Figma'dan** alındı.
